@@ -3,7 +3,7 @@ class Database {
     private $hostname = "localhost";
     private $username = "root";
     private $password = "123456";
-    private $database = "inmo";
+    private $database = "parque";
     private $charset = "utf8";
     
     function conectar()
