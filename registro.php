@@ -1,34 +1,40 @@
 <?php
-// Verificar si se envió el formulario
+
 if (isset($_POST["registrar"])) {
-    // Recuperar los datos del formulario
+    
     $documento = $_POST['documento'];
     $nombre = $_POST['nombre'];
     $correo = $_POST['correo'];
     $telefono = $_POST['telefono'];
-    
+    $id_tip_doc = $_POST['id_tip_doc'];
+    $id_comida = $_POST['id_comida'];
 
-    // Conexión a la base de datos (requiere el archivo database.php)
+    $fecha_ing = date("Y-m-d");
+
+    
     require_once("conexion/conexion.php");
     $db = new Database();
     $conectar = $db->conectar();
 
-    // Verificar si el documento ya existe en la base de datos
+    
     $consulta = $conectar->prepare("SELECT * FROM usuario WHERE documento = ?");
     $consulta->execute([$documento]);
     $usuario_existente = $consulta->fetch();
 
     if ($usuario_existente) {
-        // El usuario ya existe, mostrar mensaje de error
+        
         echo '<script>alert("El documento ya está registrado.");</script>';
     } else {
-        // Insertar el nuevo usuario en la base de datos
-        $insertar = $conectar->prepare("INSERT INTO usuario (documento, nombre, correo, telefono, id_tip_doc, id_juegos, id_comida) VALUES (?, ?, ?, ?)");
-        $insertar->execute([$documento, $nombre, $correo, $telefono, $id_tip_doc]);
+        
+        
+        $insertar = $conectar->prepare("INSERT INTO usuario (documento, nombre, correo, telefono, fecha_ing, id_tip_doc, id_comida) VALUES (?, ?, ?, ?, ?, ?,  ?)");
+        $insertar->execute([$documento, $nombre, $correo, $telefono, $fecha_ing, $id_tip_doc,  $id_comida]);
         echo '<script>alert("Usuario registrado exitosamente.");</script>';
     }
 }
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -74,7 +80,7 @@ if (isset($_POST["registrar"])) {
             <form method="POST" onsubmit="return validarFormulario()">
                 <div class="form-group">
                     <label for="documento">Documento:</label>
-                    <input type="text" maxlength="11"   class="form-control" id="documento" name="documento" required>
+                    <input type="number" maxlength="11" class="form-control" id="documento" name="documento" required>
                     <small class="text-danger" id="documentoError"></small>
                 </div>
 
@@ -91,133 +97,95 @@ if (isset($_POST["registrar"])) {
 
                 <div class="form-group">
                     <label for="telefono">Teléfono:</label>
-                    <input type="text" class="form-control"  maxlength="10" id="telefono" name="telefono" required>
-                    <small class="text-danger" id="telefonoError"></small>
+                    <input type="text" class="form-control" maxlength="10" id="telefono" name="telefono" required>
+                    <small class="number-danger" id="telefonoError"></small>
                 </div>
+
                 <div class="form-group">
-                    <label for="password">Contraseña:</label>
-                    <input type="password" class="form-control" id="password" name="password" required>
+                    <label for="id_tip_doc">Tipo de Documento:</label>
+                    <select class="form-control" id="id_tip_doc" name="id_tip_doc">
+                        <option value="1">TI</option>
+                        <option value="2"> CC</option>
+                        
+                    </select>
                 </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="id_comida">Comida:</label>
+                    <select class="form-control" id="id_comida" name="id_comida">
+                      
+                        <option value="1">crispetas</option>
+                        <option value="2">perro caliente</option>
+                        <option value="2">hamburguesa</option>
+                        <option value="2">gaseosa</option>
+                        <option value="2">agua</option>
+                        <option value="2">manzana acaramelizada</option>
+                        
+                    </select>
+                </div>
+
                 <button type="submit" class="btn btn-primary" name="registrar">Registrar</button>
             </form>
         </div>
         <script>
-    function validarFormulario() {
-        var documento = document.getElementById("documento").value;
-        var nombre = document.getElementById("nombre").value;
-        var correo = document.getElementById("correo").value;
-        var telefono = document.getElementById("telefono").value;
+            function validarFormulario() {
+                var documento = document.getElementById("documento").value;
+                var nombre = document.getElementById("nombre").value;
+                var correo = document.getElementById("correo").value;
+                var telefono = document.getElementById("telefono").value;
 
-        var documentoError = document.getElementById("documentoError");
-        var nombreError = document.getElementById("nombreError");
-        var correoError = document.getElementById("correoError");
-        var telefonoError = document.getElementById("telefonoError");
+                var documentoError = document.getElementById("documentoError");
+                var nombreError = document.getElementById("nombreError");
+                var correoError = document.getElementById("correoError");
+                var telefonoError = document.getElementById("telefonoError");
 
-        var documentoPattern = /^[0-9]{10,11}$/;
-        var nombrePattern = /^[A-Za-z\s]+$/;
-        var telefonoPattern = /^[0-9]{10}$/;
+                var documentoPattern = /^[0-9]{10,11}$/;
+                var nombrePattern = /^[A-Za-z\s]+$/;
+                var telefonoPattern = /^[0-9]{10}$/;
 
-        if (!documentoPattern.test(documento)) {
-            documentoError.textContent = "El documento debe contener entre 10 y 11 números.";
-            return false;
-        } else {
-            documentoError.textContent = "";
-        }
+                if (!documentoPattern.test(documento)) {
+                    documentoError.textContent = "El documento debe contener entre 10 y 11 números.";
+                    return false;
+                } else {
+                    documentoError.textContent = "";
+                }
 
-        if (!nombrePattern.test(nombre)) {
-            nombreError.textContent = "El nombre solo debe contener letras y espacios.";
-            return false;
-        } else {
-            nombreError.textContent = "";
-        }
+                if (!nombrePattern.test(nombre)) {
+                    nombreError.textContent = "El nombre solo debe contener letras y espacios.";
+                    return false;
+                } else {
+                    nombreError.textContent = "";
+                }
 
-        if (!telefonoPattern.test(telefono)) {
-            telefonoError.textContent = "El teléfono debe contener solo y exactamente 10 números.";
-            return false;
-        } else {
-            telefonoError.textContent = "";
-        }
+                if (!telefonoPattern.test(telefono)) {
+                    telefonoError.textContent = "El teléfono debe contener solo y exactamente 10 números.";
+                    return false;
+                } else {
+                    telefonoError.textContent = "";
+                }
 
-        // Validación de correo electrónico utilizando el atributo "required" de HTML5
-        if (correo === "") {
-            correoError.textContent = "Por favor, introduce tu correo electrónico.";
-            return false;
-        } else {
-            correoError.textContent = "";
-        }
+                // Validación de correo electrónico utilizando el atributo "required" de HTML5
+                if (correo === "") {
+                    correoError.textContent = "Por favor, introduce tu correo electrónico.";
+                    return false;
+                } else {
+                    correoError.textContent = "";
+                }
 
-        // Validación de correo electrónico utilizando expresión regular
-        var correoPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!correoPattern.test(correo)) {
-            correoError.textContent = "Por favor, introduce una dirección de correo electrónico válida.";
-            return false;
-        } else {
-            correoError.textContent = "";
-        }
+                // Validación de correo electrónico utilizando expresión regular
+                var correoPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!correoPattern.test(correo)) {
+                    correoError.textContent = "Por favor, introduce una dirección de correo electrónico válida.";
+                    return false;
+                } else {
+                    correoError.textContent = "";
+                }
 
-        return true;
-    }
-</script>
-
-        <!--/ footer Star /-->
-        <section class="section-footer">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-12 col-md-4">
-                        <div class="widget-a">
-                            <div class="w-header-a">
-                                <h3 class="w-title-a text-brand">PARQUE DIVERSIONES</h3>
-                            
-                            
-                        <div class="socials-a">
-                            <ul class="list-inline">
-                                <li class="list-inline-item">
-                                    <a href="#">
-                                        <i class="fa fa-facebook" aria-hidden="true"></i>
-                                    </a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a href="#">
-                                        <i class="fa fa-twitter" aria-hidden="true"></i>
-                                    </a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a href="#">
-                                        <i class="fa fa-instagram" aria-hidden="true"></i>
-                                    </a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a href="#">
-                                        <i class="fa fa-pinterest-p" aria-hidden="true"></i>
-                                    </a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a href="#">
-                                        <i class="fa fa-dribbble" aria-hidden="true"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="copyright-footer">
-                            <p class="copyright color-text-a">
-                                &copy; Copyright
-                                <span class="color-a">EstateAgency</span> All Rights Reserved.
-                            </p>
-                        </div>
-                        <div class="credits">
-                            <!--
-              All the links in the footer should remain intact.
-              You can delete the links only if you purchased the pro version.
-              Licensing information: https://bootstrapmade.com/license/
-              Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/buy/?theme=EstateAgency
-            -->
-                            Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
-        <!--/ Footer End /-->
+                return true;
+            }
+        </script>
 
         <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
         <div id="preloader"></div>
