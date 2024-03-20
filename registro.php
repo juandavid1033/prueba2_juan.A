@@ -6,10 +6,7 @@ if (isset($_POST["registrar"])) {
     $nombre = $_POST['nombre'];
     $correo = $_POST['correo'];
     $telefono = $_POST['telefono'];
-    $password = $_POST['password']; // Nueva línea para obtener la contraseña
-
-    // Encriptar la contraseña
-    $password_encriptada = password_hash($password, PASSWORD_DEFAULT);
+    
 
     // Conexión a la base de datos (requiere el archivo database.php)
     require_once("conexion/conexion.php");
@@ -26,8 +23,8 @@ if (isset($_POST["registrar"])) {
         echo '<script>alert("El documento ya está registrado.");</script>';
     } else {
         // Insertar el nuevo usuario en la base de datos
-        $insertar = $conectar->prepare("INSERT INTO usuario (documento, nombre, correo, telefono, contrasena) VALUES (?, ?, ?, ?, ?)");
-        $insertar->execute([$documento, $nombre, $correo, $telefono, $password_encriptada]);
+        $insertar = $conectar->prepare("INSERT INTO usuario (documento, nombre, correo, telefono, id_tip_doc, id_juegos, id_comida) VALUES (?, ?, ?, ?)");
+        $insertar->execute([$documento, $nombre, $correo, $telefono, $id_tip_doc]);
         echo '<script>alert("Usuario registrado exitosamente.");</script>';
     }
 }
