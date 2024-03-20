@@ -118,10 +118,10 @@ if (isset($_POST["registrar"])) {
                       
                         <option value="1">crispetas</option>
                         <option value="2">perro caliente</option>
-                        <option value="2">hamburguesa</option>
-                        <option value="2">gaseosa</option>
-                        <option value="2">agua</option>
-                        <option value="2">manzana acaramelizada</option>
+                        <option value="3">hamburguesa</option>
+                        <option value="4">gaseosa</option>
+                        <option value="5">agua</option>
+                        <option value="6">manzana acaramelizada</option>
                         
                     </select>
                 </div>
